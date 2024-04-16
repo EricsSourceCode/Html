@@ -16,6 +16,9 @@
 
 
 #include "HtmlFile.h"
+#include "../CppBase/FileIO.h"
+#include "../CppBase/UTF8Str.h"
+#include "../CppBase/StIO.h"
 
 
 
@@ -32,35 +35,35 @@
     urlFileDictionary = useDictionary;
     fileName = fileNameToUse;
     }
+*/
 
 
 
-  public boolean markUpFile()
-    {
-    if( fileName.length() == 0 )
-      return true; // false;
+void HtmlFile::markUpFile(
+                      const CharBuf& fileName )
+{
+StIO::putS( "Top of markUpFile." );
 
-    // mApp.showStatusAsync( "\n\nReading: " +
-     //         fileName + "\nCame from URL " + inURL );
+CharBuf fileS;
+FileIO::readAll( fileName, fileS );
 
-    StrA fileS = FileUtility.readFileToStrA( mApp,
-                                 fileName,
-                                 false,
-                                 false );
+const Int32 last = fileS.getLast();
+if( last == 0 )
+  return;
 
-    if( fileS.length() == 0 )
-      {
-      // mApp.showStatusAsync( "File length zero.\n" + fileName );
-      return true; // false;
-      }
+UTF8Str utf8Str;
+Uint16Buf fileBuf;
 
-    markupSections( fileS );
-    return true;
-    }
+// Need to check that it is really UTF8.
+utf8Str.charBufToU16Buf( fileS, fileBuf );
+
+markupSections( fileBuf );
+}
 
 
 
 
+/*
   public void processNewAnchorTags()
     {
     boolean isInsideAnchor = false;
@@ -173,10 +176,11 @@
         }
       }
     }
+*/
 
 
 
-
+/*
   public StrA getTitle()
     {
     boolean isInsideHeader = false;
@@ -291,37 +295,38 @@
 
     return StrA.Empty;
     }
+*/
 
 
 
+void HtmlFile::markupSections(
+                      const Uint16Buf& inBuf )
+{
+Uint16Buf resultBuf;
+resultBuf.copy( inBuf );
 
-  private void markupSections( StrA in )
-    {
-    StringBuilder ScrBuilder = new
-                       StringBuilder();
-    // CData can be commented out within a script:
-    // slash star  ]]><![CDATA[  star slash.
-    // It is to make it so it's not interpreted
-    // as HTML.  But it's within a script.
-    // And then the script interprets the CData
-    // begin and end markers as something within
-    // star slash comments.  To be ignored.
 
-    // You could also have // -->
-    // Two slashes for comments, which comment out
-    // the ending --> comment marker.
-    // Or a script tag followed by: <!--
+// CData can be commented out within a script:
+// slash star  ]]><![CDATA[  star slash.
+// It is to make it so it doesn't get
+// interpreted.  But it's within a script.
+// And then the script interprets the CData
+// begin and end markers as something within
+// star slash comments.  To be ignored.
 
-    StrABld htmlBld = new StrABld( in.length() );
+// You could also have // -->
+// Two slashes for comments, which comment out
+// the ending --> comment marker.
+// Or a script tag followed by: <!--
 
-    StrA result = in;
-    // result = result.replace(
-    //                          new StrA( "<![CDATA[" ),
-    //              new StrA( "" + Markers.BeginCData ));
+/*
+result = result.replace(
+               new StrA( "<![CDATA[" ),
+           new StrA( "" + Markers.BeginCData ));
 
-    // result = result.replace(
-    //                           new StrA( "]]>" ),
-    //               new StrA( "" + Markers.EndCData ));
+    result = result.replace(
+                             new StrA( "]]>" ),
+              new StrA( "" + Markers.EndCData ));
 
     result = result.replace(
                              new StrA( "<script" ),
@@ -332,13 +337,13 @@
                  new StrA( "" + Markers.EndScript ));
 
 
-    // result = result.replace(
-    //                         new StrA( "<!--" ),
-    //       new StrA( "" + Markers.BeginHtmlComment ));
+    result = result.replace(
+                             new StrA( "<!--" ),
+       new StrA( "" + Markers.BeginHtmlComment ));
 
-    //result = result.replace(
-    //                         new StrA( "-->" ),
-    //       new StrA( "" + Markers.EndHtmlComment ));
+    result = result.replace(
+                           new StrA( "-->" ),
+       new StrA( "" + Markers.EndHtmlComment ));
 
     boolean isInsideCData = false;
     boolean isInsideScript = false;
@@ -353,7 +358,7 @@
         if( inURL.toString().contains(
                         "coloradomtn.edu/" ))
           {
-          ScrBuilder.append( "" + testC );
+          ScriptBuf.appendU16( testC );
           }
         }
 
@@ -427,10 +432,8 @@
     //            ScrBuilder.toString() + "\n" );
 
     htmlS = htmlBld.toStrA();
-    markedUpS = result;
-    }
+
 */
 
-
-
-
+markedUpBuf.copy( resultBuf );
+}

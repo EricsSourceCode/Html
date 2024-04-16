@@ -1,5 +1,5 @@
 // Copyright Eric Chauvin 2024
-
+// The Java version was started in 2020.
 
 
 // This is licensed under the GNU General
@@ -29,8 +29,9 @@ class HtmlFile
   // URLParse urlParse;
   // StrA inURL = StrA.Empty;
   // StrA fileName = StrA.Empty;
-  // StrA markedUpS = StrA.Empty;
-  // StrA htmlS = StrA.Empty;
+  Uint16Buf markedUpBuf;
+  Uint16Buf htmlBuf;
+  Uint16Buf scriptBuf;
 
 
 
@@ -69,6 +70,7 @@ class HtmlFile
     {
     }
 
-
+  void markUpFile( const CharBuf& fileName );
+  void markupSections( const Uint16Buf& inBuf );
 
   };
